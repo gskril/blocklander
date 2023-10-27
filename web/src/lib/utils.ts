@@ -1,4 +1,4 @@
-import { mainnet, sepolia } from 'wagmi/chains'
+import { mainnet, sepolia } from 'viem/chains'
 import { ethers, Wallet } from 'ethers'
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
