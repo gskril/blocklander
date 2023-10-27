@@ -101,8 +101,6 @@ type ValidatorResponse = {
         },
       })
 
-      
-      console.log(validatorRes)
       const validatorData: ValidatorResponse = await validatorRes.json();
       console.log(validatorData)
   

@@ -13,8 +13,8 @@ export function Client() {
 
   const signature = useSignMessage({
     message: JSON.stringify({
+      network: 'sepolia',
       projectSlug: 'blockProposer',
-      network: 'homestead',
     }),
   })
 

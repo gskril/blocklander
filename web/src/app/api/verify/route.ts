@@ -42,7 +42,11 @@ export async function GET(request: NextRequest) {
     let signature: Signature | null = null
 
     if(executionData) {
-        signature = await generateMintingSignature(address, projectSlug, contractAddress, network)
+        try {
+            signature = await generateMintingSignature(address, projectSlug, contractAddress, network)
+        } catch(err) {
+            console.error(err)
+        }
 
     }
 

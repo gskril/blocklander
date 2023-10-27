@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { NextApiRequest, NextApiResponse } from 'next/types'
 import z from 'zod'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
@@ -40,6 +39,17 @@ export type OpenSeaMetadata = {
         // Date
     ];
 };
+
+
+let ensName = null;
+// try {
+//     ensName = await client.getEnsName(minterAddress);
+// } catch (error) {
+//     logger.error({ error });
+//     logger.error({ message: 'ensName lookup failed' });
+// }
+
+// const userName = ensName || minterAddress.substr(0, 6);
 
 
 
@@ -91,7 +101,11 @@ console.log(userAddress)
 
 const executionInfo = await fetchBeaconChainData(userAddress)
 
-  
+//   const metadata: Metadata = {
+//     name: `${userAddress}`,
+//     description: `Proof of successfully proposing a block on Ethereum`,
+//     image: `https://${WEBSITE_URL}/api/v1/image/${tokenId}`,
+//   }
   //     const metadata = await ioredisClient.hget(tokenIdString.toLowerCase(), 'metadata');
   //     const openseaMetadata = metadataToOpenSeaMetadata(JSON.parse(metadata));
 
