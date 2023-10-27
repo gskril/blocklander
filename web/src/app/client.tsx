@@ -31,8 +31,8 @@ export function Client() {
   return (
     <div>
       <main className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 lg:gap-10 xl:gap-14">
-        <div className="w-fit bg-gray-200">
-          <img src="https://placehold.co/600x600" alt="" />
+        <div className="max-w-2xl">
+          <img src="/nft.png" className="w-full" alt="" />
         </div>
 
         <div className="flex flex-col gap-4">
