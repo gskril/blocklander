@@ -1,11 +1,12 @@
-'use client'
+import { Metadata } from 'next'
 
-import { Button } from '@ensdomains/thorin'
+export const metadata: Metadata = {
+  title: 'Commemerative NFT for Block Proposers',
+  description: 'Validators, come get your NFT!',
+}
+
+import { Client } from './client'
 
 export default function Home() {
-  return (
-    <main>
-      <Button>hi</Button>
-    </main>
-  )
+  return <Client />
 }
