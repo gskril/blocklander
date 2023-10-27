@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
 
     const projectSlug = "blockProposer"
-    const network = "homestead"
+    const network: string = "sepolia"
     const message = JSON.stringify({ network, projectSlug })
     const signerAddress = addressZ.parse(recoverAddress(hashMessage(message), userSignature))
     if (address !== signerAddress) throw new Error('Invalid signer')
