@@ -1,7 +1,11 @@
 import { mainnet, sepolia } from 'viem/chains'
 import { ethers, Wallet } from 'ethers'
+// import Redis from 'ioredis';
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
+const BEACONCHAIN_API_KEY = process.env.BEACONCHAIN_API_KEY || ''
+
+const REDIS_URL = process.env.REDIS_URL || ''
 
 export function parseSearchParams(
   params: URLSearchParams
@@ -70,4 +74,59 @@ export const generateMintingSignature = async (
     const domainSeparator = createDomainSeparator(projectSlug, contractAddress, network)
     const signature = await generateSignature(memberAddress, domainSeparator)
     return signature as Signature
+}
+
+// export const ioredisClient = new Redis(REDIS_URL);
+
+
+type ValidatorResponse = {
+    status: string;
+    data: Array<{
+      publickey: string;
+      validatorindex: number;
+    }>;
+  };
+  
+  type ExecutionResponse = {
+    status: string;
+    data: any; // Replace 'any' with the actual shape of the response
+  };
+  
+  export async function fetchBeaconChainData(userAddress: string): Promise<any> {
+    try {
+      const validatorUrl = `https://beaconcha.in/api/v1/validator/withdrawalCredentials/${userAddress}?limit=10&offset=0&apikey=${BEACONCHAIN_API_KEY}`
+      const validatorRes = await fetch(validatorUrl, {
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+
+      
+      console.log(validatorRes)
+      const validatorData: ValidatorResponse = await validatorRes.json();
+      console.log(validatorData)
+  
+      if (validatorData.status === 'OK' && validatorData.data.length > 0) {
+        const validatorIndex = validatorData.data[0].validatorindex;
+  
+        const executionUrl = `https://beaconcha.in/api/v1/execution/${validatorIndex}/produced?offset=0&limit=10&sort=desc&APIKEY=${BEACONCHAIN_API_KEY}`;
+
+        const executionRes = await fetch(executionUrl, {
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+  
+        const executionData: ExecutionResponse = await executionRes.json();
+  
+        if (executionData.status === 'OK') {
+          const executionInfo = executionData.data;
+          // Do something with executionInfo
+          console.log(executionInfo);
+          return executionInfo;
+        }
+      }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
