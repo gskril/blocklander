@@ -8,6 +8,7 @@ import {
   Signature,
   fetchBeaconChainData,
 } from '@/lib/utils'
+import { Address } from 'viem'
 
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || ''
 const TEST_CONTRACT_ADDRESS = process.env.TEST_CONTRACT_ADDRESS || ''
@@ -38,8 +39,8 @@ export async function GET(request: NextRequest) {
   )
   if (address !== signerAddress) throw new Error('Invalid signer')
 
-  const executionData = await fetchBeaconChainData(address).catch((err) =>
-    console.error(err)
+  const executionData = await fetchBeaconChainData(address as Address).catch(
+    (err) => console.error(err)
   )
 
   const contractAddress =
