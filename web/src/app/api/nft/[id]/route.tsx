@@ -1,6 +1,5 @@
 import { ImageResponse } from 'next/og'
 import { NextRequest, NextResponse } from 'next/server'
-import { createPublicClient } from 'viem'
 import z from 'zod'
 
 export const runtime = 'edge'
@@ -36,44 +35,139 @@ export async function GET(
           style={{
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'space-between',
             width: '100%',
             height: '100%',
             color: '#fff',
             backgroundColor: '#000000',
             border: '0.75rem solid #FF364E',
-            borderRadius: '6rem',
-            backgroundImage: `url('${baseUrl}/pattern.svg')`,
+            borderRadius: '8rem',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             backgroundSize: 'cover',
             fontFamily: 'PPSupplyMono',
-            padding: '4rem',
+            padding: '2.5rem',
+            overflow: 'hidden',
           }}
         >
-          <span
+          <div
+            className="bg-pattern"
             style={{
-              fontSize: '4rem',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              color: 'white',
+              backgroundColor: '#FF364E',
+              opacity: 0.1,
             }}
-          >
-            GREGSKRIL.ETH
-          </span>
+          />
 
-          <span
+          <img
+            src={`${baseUrl}/pattern.svg`}
             style={{
-              fontSize: '2rem',
-              opacity: 0.5,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100vw',
             }}
-          >
-            LATEST
-          </span>
+          />
 
-          <span
+          <div style={{ display: 'flex', padding: '3rem 3rem 0 3rem' }}>
+            <span
+              style={{
+                fontSize: '5rem',
+              }}
+            >
+              GREGSKRIL.ETH
+            </span>
+          </div>
+
+          <div
             style={{
-              fontSize: '4rem',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '0 3rem 0 3rem',
             }}
           >
-            18443534
-          </span>
+            <span
+              style={{
+                fontSize: '3.5rem',
+                opacity: 0.5,
+              }}
+            >
+              LATEST BLOCK
+            </span>
+
+            <span
+              style={{
+                fontSize: '13rem',
+                lineHeight: 1,
+              }}
+            >
+              18443534
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              padding: '2.5rem 3.5rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              width: '100%',
+              borderRadius: '4rem',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  opacity: 0.5,
+                  fontSize: '3rem',
+                }}
+              >
+                BLOCKS LANDED
+              </span>
+              <span
+                style={{
+                  fontSize: '7.75rem',
+                }}
+              >
+                189
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  opacity: 0.5,
+                  fontSize: '3rem',
+                }}
+              >
+                ETH EARNED
+              </span>
+              <span
+                style={{
+                  fontSize: '7.75rem',
+                }}
+              >
+                19.441
+              </span>
+            </div>
+          </div>
         </div>
       ),
       {
