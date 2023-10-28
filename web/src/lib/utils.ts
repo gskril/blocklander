@@ -1,5 +1,6 @@
 import { mainnet, sepolia } from 'viem/chains'
 import { ethers, Wallet } from 'ethers'
+import { Address } from 'viem'
 // import Redis from 'ioredis';
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
@@ -99,32 +100,50 @@ type ValidatorResponse = {
 
 type ExecutionResponse = {
   status: string
-  data: any // Replace 'any' with the actual shape of the response
+  data: Array<{
+    blockHash: string
+    blockNumber: number
+    timestamp: number
+    blockReward: number
+    blockMevReward: number
+    producerReward: number
+    feeRecipient: string
+    gasLimit: number
+    gasUsed: number
+    baseFee: number
+    txCount: number
+    internalTxCount: number
+    uncleCount: number
+    parentHash: string
+    uncleHash: string
+    difficulty: number
+    posConsensus: {
+      executionBlockNumber: number
+      proposerIndex: number
+      slot: number
+      epoch: number
+      finalized: boolean
+    }
+    relay: {
+      tag: string
+      builderPubkey: string
+      producerFeeRecipient: string
+    }
+    consensusAlgorithm: string
+  }>
 }
 
-export async function fetchBeaconChainData(userAddress: string): Promise<any> {
+export async function fetchBeaconChainData(userAddress: Address) {
   try {
     const validatorUrl = `https://beaconcha.in/api/v1/validator/withdrawalCredentials/${userAddress}?limit=10&offset=0&apikey=${BEACONCHAIN_API_KEY}`
-    const validatorRes = await fetch(validatorUrl, {
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-
+    const validatorRes = await fetch(validatorUrl)
     const validatorData: ValidatorResponse = await validatorRes.json()
-    console.log(validatorData)
 
     if (validatorData.status === 'OK' && validatorData.data.length > 0) {
       const validatorIndex = validatorData.data[0].validatorindex
 
       const executionUrl = `https://beaconcha.in/api/v1/execution/${validatorIndex}/produced?offset=0&limit=10&sort=desc&APIKEY=${BEACONCHAIN_API_KEY}`
-
-      const executionRes = await fetch(executionUrl, {
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-
+      const executionRes = await fetch(executionUrl)
       const executionData: ExecutionResponse = await executionRes.json()
 
       if (executionData.status === 'OK') {
