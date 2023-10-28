@@ -1,10 +1,21 @@
 'use client'
 
-import { SubTitle, Title } from '@/components/atoms'
-import { Button, Helper, Spinner } from '@ensdomains/thorin'
+import { Button, Spinner } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Address, useAccount, useDisconnect, useSignMessage } from 'wagmi'
+import {
+  Address,
+  useAccount,
+  useContractWrite,
+  useDisconnect,
+  usePrepareContractWrite,
+  useSignMessage,
+  useWaitForTransaction,
+} from 'wagmi'
 import { useFetch } from 'usehooks-ts'
+
+import { contract } from '@/lib/contractABI'
+import { Signature } from '@/lib/utils'
+import { SubTitle, Title } from '@/components/atoms'
 
 export function Client() {
   const { address } = useAccount()
@@ -20,13 +31,33 @@ export function Client() {
 
   const readyForApiCall = !!signature.data && !!address
 
-  const apiResponse = useFetch<{ address: Address; signature: Address | null }>(
+  const apiResponse = useFetch<{
+    address: Address
+    signature: Signature | null
+  }>(
     readyForApiCall
       ? `/api/verify?address=${address}&userSignature=${signature.data}`
       : undefined
   )
 
   const apiResponseIsLoading = !apiResponse.data && !apiResponse.error
+
+  const prepare = usePrepareContractWrite({
+    ...contract,
+    functionName: 'mintWithSignature',
+    args:
+      address && apiResponse.data?.signature
+        ? [
+            address, // minter
+            apiResponse.data?.signature?.v, // v
+            apiResponse.data?.signature?.r, // r
+            apiResponse.data?.signature?.s, // s
+          ]
+        : undefined,
+  })
+
+  const tx = useContractWrite(prepare.config)
+  const receipt = useWaitForTransaction(tx.data)
 
   return (
     <div>
@@ -42,13 +73,37 @@ export function Client() {
             mint the NFT.
           </SubTitle>
 
-          <div className="flex gap-4 w-min">
+          <div className="flex gap-3 w-min items-center">
             {(() => {
-              // When the user connects, show sign message button
-              if (address) {
+              // If the user hasn't connected, show the connect button
+              if (!address) {
                 return (
-                  <Button onClick={() => signature.signMessage?.()}>
-                    Sign Message
+                  <Button onClick={() => openConnectModal?.()}>
+                    Connect Wallet
+                  </Button>
+                )
+              }
+
+              if (receipt.isError) {
+                return (
+                  <Button colorStyle="redPrimary">Transaction Failed</Button>
+                )
+              }
+
+              // Wait for transaction
+              if (receipt.isLoading) {
+                return <Button disabled>Transaction Processing</Button>
+              }
+
+              // If the API returns a valid signature, show the mint button
+              if (apiResponse.data?.signature) {
+                return (
+                  <Button
+                    loading={tx.isLoading}
+                    disabled={!tx.write || tx.isLoading}
+                    onClick={() => tx.write?.()}
+                  >
+                    Mint NFT
                   </Button>
                 )
               }
@@ -57,24 +112,25 @@ export function Client() {
               if (signature.data) {
                 // First ping the API to verify the signature
                 if (apiResponseIsLoading) {
-                  return <Spinner />
+                  return <Spinner size="medium" color="bluePrimary" />
                 }
 
-                // If the API returns a valid signature, show the mint button
-                if (apiResponse.data?.signature) {
-                  return <Button>Mint NFT</Button>
-                }
-
-                // If the API returns an invalid signature, show an error
-                return <Helper type="error">Invalid Signature</Helper>
+                // If the API returns a null signature, they're not eligible to mint
+                return <Button disabled>You Are Not Eligible</Button>
               }
 
-              // If the user hasn't connected, show the connect button
-              return (
-                <Button onClick={() => openConnectModal?.()}>
-                  Connect Wallet
-                </Button>
-              )
+              // When the user connects, show sign message button
+              if (address) {
+                return (
+                  <Button
+                    onClick={() => signature.signMessage?.()}
+                    loading={signature.isLoading}
+                    disabled={signature.isLoading}
+                  >
+                    Sign Message
+                  </Button>
+                )
+              }
             })()}
 
             {address && (
