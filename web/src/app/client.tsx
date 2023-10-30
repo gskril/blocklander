@@ -84,6 +84,18 @@ export function Client() {
                 )
               }
 
+              if (receipt.isSuccess) {
+                return (
+                  <Button
+                    as="a"
+                    href={`https://sepolia.etherscan.io/tx/${receipt.data?.transactionHash}`}
+                    colorStyle="greenPrimary"
+                  >
+                    Success! View on Etherscan
+                  </Button>
+                )
+              }
+
               if (receipt.isError) {
                 return (
                   <Button colorStyle="redPrimary">Transaction Failed</Button>
@@ -92,7 +104,11 @@ export function Client() {
 
               // Wait for transaction
               if (receipt.isLoading) {
-                return <Button disabled>Transaction Processing</Button>
+                return (
+                  <Button disabled loading>
+                    Transaction Processing
+                  </Button>
+                )
               }
 
               // If the API returns a valid signature, show the mint button
