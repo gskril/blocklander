@@ -5,6 +5,7 @@ import { contract } from '@/lib/contractABI'
 import { fetchBeaconChainData } from '@/lib/utils'
 import { createPublicClient, http } from 'viem'
 import { sepolia } from 'viem/chains'
+import { EXAMPLE_VALIDATOR_ADDRESS } from '@/app/api/verify/route'
 
 export const runtime = 'edge'
 
@@ -40,11 +41,13 @@ export async function GET(
   })
 
   try {
-    const ownerOfToken = await client.readContract({
-      ...contract,
-      functionName: 'ownerOf',
-      args: [BigInt(id)],
-    })
+    // const ownerOfToken = await client.readContract({
+    //   ...contract,
+    //   functionName: 'ownerOf',
+    //   args: [BigInt(id)],
+    // })
+
+    const ownerOfToken = EXAMPLE_VALIDATOR_ADDRESS
 
     const name = await client.getEnsName({ address: ownerOfToken })
     const beaconChainData = await fetchBeaconChainData(ownerOfToken)

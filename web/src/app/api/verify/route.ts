@@ -12,7 +12,8 @@ import { Address } from 'viem'
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
-const EXAMPLE_VALIDATOR_ADDRESS = '0xFf8D58f85a4f7199c4b9461F787cD456Ad30e594' // danning.eth
+export const EXAMPLE_VALIDATOR_ADDRESS =
+  '0xFf8D58f85a4f7199c4b9461F787cD456Ad30e594' // danning.eth
 
 const addressZ = z.string().regex(/^0x[a-fA-F0-9]{40}$/)
 
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 
   if (network === 'homestead' && signerAddress !== address)
     throw new Error('Invalid signer')
-  //   if (address !== signerAddress) throw new Error('Invalid signer')
+  // if (address !== signerAddress) throw new Error('Invalid signer')
 
   const addressForExecutionData =
     network === 'homestead' ? address : EXAMPLE_VALIDATOR_ADDRESS
