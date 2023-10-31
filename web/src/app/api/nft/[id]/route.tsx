@@ -35,7 +35,7 @@ export async function GET(
   const metadata: ResponseType = {
     name: `BlockLander #${id}`,
     image: `${baseUrl}/api/nft/${id}/image`,
-    description: 'A commemerative NFT for Ethereum block proposers',
+    description: 'A commemorative NFT for Ethereum block proposers',
     background_color: '000000',
   }
 

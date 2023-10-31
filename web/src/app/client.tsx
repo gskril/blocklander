@@ -33,6 +33,7 @@ export function Client() {
 
   const apiResponse = useFetch<{
     address: Address
+    validatorIndex: number,
     signature: Signature | null
   }>(
     readyForApiCall
@@ -49,6 +50,7 @@ export function Client() {
       address && apiResponse.data?.signature
         ? [
             address, // minter
+            BigInt(apiResponse.data?.validatorIndex), // validatorIndex
             apiResponse.data?.signature?.v, // v
             apiResponse.data?.signature?.r, // r
             apiResponse.data?.signature?.s, // s
@@ -67,7 +69,7 @@ export function Client() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <Title>Commemerative NFT for Block Proposers</Title>
+          <Title>Commemorative NFT for Block Proposers</Title>
           <SubTitle>
             If you’ve ever proposed a block on the Ethereum consensus layer,
             mint the NFT.

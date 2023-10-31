@@ -197,6 +197,7 @@ export const contractABI = [
   {
     inputs: [
       { internalType: 'address', name: 'minter', type: 'address' },
+      { internalType: 'uint256', name: 'validatorIndex', type: 'uint256' },
       { internalType: 'uint8', name: 'v', type: 'uint8' },
       { internalType: 'bytes32', name: 'r', type: 'bytes32' },
       { internalType: 'bytes32', name: 's', type: 'bytes32' },
