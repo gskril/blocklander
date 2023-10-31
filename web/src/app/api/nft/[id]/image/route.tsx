@@ -2,9 +2,9 @@ import { ImageResponse } from 'next/og'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { contract } from '@/lib/contractABI'
-import { fetchBeaconChainData } from '@/lib/utils'
+import { ExecutionResponse, fetchBeaconChainData } from '@/lib/utils'
 import { createPublicClient, http } from 'viem'
-import { sepolia } from 'viem/chains'
+import { base, mainnet } from 'viem/chains'
 
 export const runtime = 'edge'
 
@@ -34,21 +34,24 @@ export async function GET(
 
   const { id } = safeParse.data
 
-  const client = createPublicClient({
-    chain: sepolia,
+  const baseClient = createPublicClient({
+    chain: base,
+    transport: http(),
+  })
+
+  const mainnetClient = createPublicClient({
+    chain: mainnet,
     transport: http(),
   })
 
   try {
-    // const ownerOfToken = await client.readContract({
-    //   ...contract,
-    //   functionName: 'ownerOf',
-    //   args: [BigInt(id)],
-    // })
+    const ownerOfToken = await baseClient.readContract({
+      ...contract,
+      functionName: 'ownerOf',
+      args: [BigInt(id)],
+    })
 
-    const ownerOfToken = '0xFf8D58f85a4f7199c4b9461F787cD456Ad30e594'
-
-    const name = await client.getEnsName({ address: ownerOfToken })
+    const name = await mainnetClient.getEnsName({ address: ownerOfToken })
     const beaconChainData = await fetchBeaconChainData(ownerOfToken)
 
     if (!beaconChainData?.executionData) {
@@ -67,7 +70,7 @@ export async function GET(
       name:
         name?.toUpperCase() ||
         ownerOfToken.slice(0, 6) + '...' + ownerOfToken.slice(-4),
-      latestBlock: beaconChainData.executionData.data[0].blockNumber,
+      latestBlock: beaconChainData.executionData.data[0],
       blocksLanded: beaconChainData.executionData.data.length,
       ethEarned: rewardsSum,
     })
@@ -83,7 +86,7 @@ export async function GET(
 
 type ImageProps = {
   name: string
-  latestBlock: number
+  latestBlock: ExecutionResponse['data'][0]
   blocksLanded: number
   ethEarned: number
 }
@@ -173,7 +176,17 @@ async function generateImage({
               lineHeight: 1,
             }}
           >
-            {latestBlock}
+            {latestBlock.blockNumber}
+          </span>
+
+          <span
+            style={{
+              fontSize: '3rem',
+              lineHeight: 1,
+              opacity: 0.5,
+            }}
+          >
+            {formatTimestamp(latestBlock.timestamp * 1000).toUpperCase()}
           </span>
         </div>
 
@@ -249,4 +262,18 @@ async function generateImage({
       ],
     }
   )
+}
+
+function formatTimestamp(timestamp: number): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  })
+  const formattedDate = formatter.format(new Date(timestamp))
+
+  return formattedDate
 }
