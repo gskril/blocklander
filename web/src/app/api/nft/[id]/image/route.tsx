@@ -12,7 +12,8 @@ const schema = z.object({
   id: z.coerce.number(),
 })
 
-const baseUrl = 'http://localhost:3000'
+const VERCEL_URL = process.env.VERCEL_URL
+const baseUrl = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000'
 
 const font = fetch(
   new URL(
@@ -48,22 +49,24 @@ export async function GET(
     const name = await client.getEnsName({ address: ownerOfToken })
     const beaconChainData = await fetchBeaconChainData(ownerOfToken)
 
-    if (!beaconChainData) {
+    if (!beaconChainData?.executionData) {
       return NextResponse.json(
         { error: 'No data found for this address' },
         { status: 400 }
       )
     }
 
-    const rewards = beaconChainData.map((data) => data.blockReward)
+    const rewards = beaconChainData.executionData.data.map(
+      (data) => data.blockReward
+    )
     const rewardsSum = rewards.reduce((acc, curr) => acc + curr, 0)
 
     const image = await generateImage({
       name:
         name?.toUpperCase() ||
         ownerOfToken.slice(0, 6) + '...' + ownerOfToken.slice(-4),
-      latestBlock: beaconChainData[0].blockNumber,
-      blocksLanded: beaconChainData.length,
+      latestBlock: beaconChainData.executionData.data[0].blockNumber,
+      blocksLanded: beaconChainData.executionData.data.length,
       ethEarned: rewardsSum,
     })
 
