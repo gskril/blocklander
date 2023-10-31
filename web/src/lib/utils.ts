@@ -1,12 +1,9 @@
 import { mainnet, sepolia } from 'viem/chains'
 import { ethers, Wallet } from 'ethers'
 import { Address } from 'viem'
-// import Redis from 'ioredis';
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
 const BEACONCHAIN_API_KEY = process.env.BEACONCHAIN_API_KEY || ''
-
-const REDIS_URL = process.env.REDIS_URL || ''
 
 export function parseSearchParams(
   params: URLSearchParams
@@ -56,13 +53,14 @@ export const createDomainSeparator = (
 
 export const generateSignature = async (
   address: string,
+  validatorIndex: number,
   domainSeparator: string
 ) => {
   const signer = new Wallet(VALIDATOR_PRIVATE_KEY)
 
   const payloadHash = ethers.utils.defaultAbiCoder.encode(
-    ['bytes32', 'address'],
-    [domainSeparator, address]
+    ['bytes32', 'address', 'uint256'],
+    [domainSeparator, address, validatorIndex]
   )
   const messageHash = ethers.utils.keccak256(payloadHash)
 
@@ -75,6 +73,7 @@ export const generateSignature = async (
 
 export const generateMintingSignature = async (
   memberAddress: string,
+  validatorIndex: number,
   projectSlug: string,
   contractAddress: string,
   network: string
@@ -84,11 +83,9 @@ export const generateMintingSignature = async (
     contractAddress,
     network
   )
-  const signature = await generateSignature(memberAddress, domainSeparator)
+  const signature = await generateSignature(memberAddress, validatorIndex, domainSeparator)
   return signature as Signature
 }
-
-// export const ioredisClient = new Redis(REDIS_URL);
 
 type ValidatorResponse = {
   status: string
@@ -133,7 +130,7 @@ type ExecutionResponse = {
   }>
 }
 
-export async function fetchBeaconChainData(userAddress: Address) {
+export async function fetchBeaconChainData(userAddress: Address): Promise<{ executionData: ExecutionResponse, validatorIndex: number } | undefined > {
   try {
     const validatorUrl = `https://beaconcha.in/api/v1/validator/withdrawalCredentials/${userAddress}?limit=10&offset=0&apikey=${BEACONCHAIN_API_KEY}`
     const validatorRes = await fetch(validatorUrl)
@@ -150,10 +147,11 @@ export async function fetchBeaconChainData(userAddress: Address) {
         const executionInfo = executionData.data
         // Do something with executionInfo
         console.log(executionInfo)
-        return executionInfo
+        return { executionData, validatorIndex }
       }
     }
   } catch (error) {
     console.error('Error fetching data:', error)
+
   }
 }
