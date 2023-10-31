@@ -47,7 +47,7 @@ export async function GET(
     //   args: [BigInt(id)],
     // })
 
-    const ownerOfToken = EXAMPLE_VALIDATOR_ADDRESS
+    const ownerOfToken = '0xFf8D58f85a4f7199c4b9461F787cD456Ad30e594'
 
     const name = await client.getEnsName({ address: ownerOfToken })
     const beaconChainData = await fetchBeaconChainData(ownerOfToken)
