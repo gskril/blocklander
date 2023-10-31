@@ -5,7 +5,6 @@ import { contract } from '@/lib/contractABI'
 import { fetchBeaconChainData } from '@/lib/utils'
 import { createPublicClient, http } from 'viem'
 import { sepolia } from 'viem/chains'
-import { EXAMPLE_VALIDATOR_ADDRESS } from '@/app/api/verify/route'
 
 export const runtime = 'edge'
 
