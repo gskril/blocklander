@@ -70,6 +70,7 @@ export async function GET(
       name:
         name?.toUpperCase() ||
         ownerOfToken.slice(0, 6) + '...' + ownerOfToken.slice(-4),
+      validatorIndex: beaconChainData.validatorIndex,
       latestBlock: beaconChainData.executionData.data[0],
       blocksLanded: beaconChainData.executionData.data.length,
       ethEarned: rewardsSum,
@@ -86,6 +87,7 @@ export async function GET(
 
 type ImageProps = {
   name: string
+  validatorIndex: number
   latestBlock: ExecutionResponse['data'][0]
   blocksLanded: number
   ethEarned: number
@@ -93,6 +95,7 @@ type ImageProps = {
 
 async function generateImage({
   name,
+  validatorIndex,
   latestBlock,
   blocksLanded,
   ethEarned,
@@ -144,7 +147,14 @@ async function generateImage({
           }}
         />
 
-        <div style={{ display: 'flex', padding: '3rem 3rem 0 3rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '3rem 3rem 0 3rem',
+          }}
+        >
           <span
             style={{
               fontSize: '5rem',
@@ -152,6 +162,17 @@ async function generateImage({
           >
             {name}
           </span>
+
+          {name.length <= 14 && (
+            <span
+              style={{
+                fontSize: '4rem',
+                opacity: 0.5,
+              }}
+            >
+              #{validatorIndex}
+            </span>
+          )}
         </div>
 
         <div
