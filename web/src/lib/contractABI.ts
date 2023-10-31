@@ -5,16 +5,9 @@ export const contractABI = [
     inputs: [
       { internalType: 'string', name: '_name', type: 'string' },
       { internalType: 'string', name: '_symbol', type: 'string' },
-      {
-        internalType: 'string',
-        name: '_metadataFolderURI',
-        type: 'string',
-      },
-      {
-        internalType: 'uint256',
-        name: '_mintsPerAddress',
-        type: 'uint256',
-      },
+      { internalType: 'string', name: '_slug', type: 'string' },
+      { internalType: 'string', name: '_metadataFolderURI', type: 'string' },
+      { internalType: 'uint256', name: '_mintsPerAddress', type: 'uint256' },
       {
         internalType: 'string',
         name: '_openseaContractMetadataURL',
@@ -71,12 +64,7 @@ export const contractABI = [
         name: 'operator',
         type: 'address',
       },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'approved',
-        type: 'bool',
-      },
+      { indexed: false, internalType: 'bool', name: 'approved', type: 'bool' },
     ],
     name: 'ApprovalForAll',
     type: 'event',
@@ -103,18 +91,8 @@ export const contractABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
+      { indexed: true, internalType: 'address', name: 'from', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'to', type: 'address' },
       {
         indexed: true,
         internalType: 'uint256',
@@ -208,7 +186,7 @@ export const contractABI = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'minted',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -292,6 +270,13 @@ export const contractABI = [
       { internalType: 'bool', name: 'approved', type: 'bool' },
     ],
     name: 'setApprovalForAll',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'string', name: 'folderUrl', type: 'string' }],
+    name: 'setContractMetadataFolderURI',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -381,6 +366,6 @@ export const contractABI = [
 ] as const
 
 export const contract = {
-  address: '0x8a48c5694461b2c70373beee57448be2eff78e92' as Address,
+  address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address,
   abi: contractABI,
 }

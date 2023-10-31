@@ -67,6 +67,7 @@ export const generateSignature = async (
   const signedAddress = await signer.signMessage(
     ethers.utils.arrayify(messageHash)
   )
+
   const signature: ethers.Signature = ethers.utils.splitSignature(signedAddress)
   return signature
 }
@@ -83,7 +84,12 @@ export const generateMintingSignature = async (
     contractAddress,
     network
   )
-  const signature = await generateSignature(memberAddress, validatorIndex, domainSeparator)
+
+  const signature = await generateSignature(
+    memberAddress,
+    validatorIndex,
+    domainSeparator
+  )
   return signature as Signature
 }
 
@@ -130,7 +136,11 @@ type ExecutionResponse = {
   }>
 }
 
-export async function fetchBeaconChainData(userAddress: Address): Promise<{ executionData: ExecutionResponse, validatorIndex: number } | undefined > {
+export async function fetchBeaconChainData(
+  userAddress: Address
+): Promise<
+  { executionData: ExecutionResponse; validatorIndex: number } | undefined
+> {
   try {
     const validatorUrl = `https://beaconcha.in/api/v1/validator/withdrawalCredentials/${userAddress}?limit=10&offset=0&apikey=${BEACONCHAIN_API_KEY}`
     const validatorRes = await fetch(validatorUrl)
@@ -145,13 +155,10 @@ export async function fetchBeaconChainData(userAddress: Address): Promise<{ exec
 
       if (executionData.status === 'OK') {
         const executionInfo = executionData.data
-        // Do something with executionInfo
-        console.log(executionInfo)
         return { executionData, validatorIndex }
       }
     }
   } catch (error) {
     console.error('Error fetching data:', error)
-
   }
 }

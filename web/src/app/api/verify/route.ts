@@ -10,8 +10,7 @@ import {
 } from '@/lib/utils'
 import { Address } from 'viem'
 
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || ''
-const TEST_CONTRACT_ADDRESS = process.env.TEST_CONTRACT_ADDRESS || ''
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const EXAMPLE_VALIDATOR_ADDRESS = '0xFf8D58f85a4f7199c4b9461F787cD456Ad30e594' // danning.eth
 
@@ -23,6 +22,10 @@ const schema = z.object({
 })
 
 export async function GET(request: NextRequest) {
+  if (!CONTRACT_ADDRESS) {
+    throw new Error('Missing contract address')
+  }
+
   const params = parseSearchParams(request.nextUrl.searchParams)
   const safeParse = schema.safeParse(params)
 
@@ -33,30 +36,25 @@ export async function GET(request: NextRequest) {
   // Access the validated data
   const { address, userSignature } = safeParse.data
 
-  const projectSlug = 'blockProposer'
+  const projectSlug = 'blockLander'
   const network: string = 'sepolia'
   const message = JSON.stringify({ network, projectSlug })
   const signerAddress = addressZ.parse(
     recoverAddress(hashMessage(message), userSignature)
   )
 
-  if(network === 'homestead' && signerAddress !== address) throw new Error('Invalid signer')
-//   if (address !== signerAddress) throw new Error('Invalid signer')
+  if (network === 'homestead' && signerAddress !== address)
+    throw new Error('Invalid signer')
+  //   if (address !== signerAddress) throw new Error('Invalid signer')
 
-    const addressForExecutionData = (network === 'homestead' ? address : EXAMPLE_VALIDATOR_ADDRESS) 
+  const addressForExecutionData =
+    network === 'homestead' ? address : EXAMPLE_VALIDATOR_ADDRESS
 
-
-    const beaconData = await fetchBeaconChainData(addressForExecutionData as Address).catch(
-        (err) => console.error(err)
-  )
-
-  const contractAddress =
-    network === 'homestead' ? CONTRACT_ADDRESS : TEST_CONTRACT_ADDRESS
+  const beaconData = await fetchBeaconChainData(
+    addressForExecutionData as Address
+  ).catch((err) => console.error(err))
 
   let signature: Signature | null = null
-
-  console.log(`${CONTRACT_ADDRESS} ${TEST_CONTRACT_ADDRESS}`)
-  console.log(`${address} ${beaconData?.validatorIndex} ${projectSlug} ${contractAddress} ${network}`)
 
   if (beaconData) {
     try {
@@ -64,7 +62,7 @@ export async function GET(request: NextRequest) {
         address,
         beaconData.validatorIndex,
         projectSlug,
-        contractAddress,
+        CONTRACT_ADDRESS,
         network
       )
     } catch (err) {
@@ -72,5 +70,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ address, validatorIndex: beaconData?.validatorIndex, signature }, { status: 200 })
+  return NextResponse.json(
+    { address, validatorIndex: beaconData?.validatorIndex, signature },
+    { status: 200 }
+  )
 }

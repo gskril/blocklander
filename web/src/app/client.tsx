@@ -30,7 +30,7 @@ export function Client() {
   const signature = useSignMessage({
     message: JSON.stringify({
       network: 'sepolia',
-      projectSlug: 'blockProposer',
+      projectSlug: 'blockLander',
     }),
   })
 
@@ -107,6 +107,7 @@ export function Client() {
                 return (
                   <Button
                     as="a"
+                    target="_blank"
                     href={`https://sepolia.etherscan.io/tx/${receipt.data?.transactionHash}`}
                     colorStyle="greenPrimary"
                   >
