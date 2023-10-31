@@ -1,4 +1,4 @@
-import { mainnet, sepolia } from 'viem/chains'
+import { base } from 'viem/chains'
 import { ethers, Wallet } from 'ethers'
 import { Address } from 'viem'
 
@@ -33,8 +33,7 @@ export const createDomainSeparator = (
 ): string => {
   // tokenId is use for 1155s, where each tokenId has different mint requirements.
   // for 712s, tokenId is always 1.
-
-  const networkId = network === 'homestead' ? mainnet.id : sepolia.id
+  const networkId = base.id
 
   const DOMAIN_SEPARATOR = ethers.utils.keccak256(
     ethers.utils.defaultAbiCoder.encode(
@@ -101,7 +100,7 @@ type ValidatorResponse = {
   }>
 }
 
-type ExecutionResponse = {
+export type ExecutionResponse = {
   status: string
   data: Array<{
     blockHash: string
@@ -154,7 +153,6 @@ export async function fetchBeaconChainData(
       const executionData: ExecutionResponse = await executionRes.json()
 
       if (executionData.status === 'OK') {
-        const executionInfo = executionData.data
         return { executionData, validatorIndex }
       }
     }

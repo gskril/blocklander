@@ -4,7 +4,6 @@ import { Button, Spinner } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   Address,
-  sepolia,
   useAccount,
   useContractWrite,
   useDisconnect,
@@ -14,6 +13,7 @@ import {
   useSwitchNetwork,
   useWaitForTransaction,
 } from 'wagmi'
+import { base } from 'wagmi/chains'
 import { useFetch } from 'usehooks-ts'
 
 import { contract } from '@/lib/contractABI'
@@ -29,7 +29,7 @@ export function Client() {
 
   const signature = useSignMessage({
     message: JSON.stringify({
-      network: 'sepolia',
+      network: 'base',
       projectSlug: 'blockLander',
     }),
   })
@@ -96,7 +96,7 @@ export function Client() {
                 return (
                   <Button
                     colorStyle="redPrimary"
-                    onClick={() => switchNetwork?.(sepolia.id)}
+                    onClick={() => switchNetwork?.(base.id)}
                   >
                     Wrong Network
                   </Button>
@@ -108,10 +108,10 @@ export function Client() {
                   <Button
                     as="a"
                     target="_blank"
-                    href={`https://sepolia.etherscan.io/tx/${receipt.data?.transactionHash}`}
+                    href={`https://basescan.org/tx/${receipt.data?.transactionHash}`}
                     colorStyle="greenPrimary"
                   >
-                    Success! View on Etherscan
+                    Success! View on BaseScan
                   </Button>
                 )
               }

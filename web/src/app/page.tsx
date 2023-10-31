@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Commemerative NFT for Block Proposers',
-  description: 'Validators, come get your NFT!',
+  title: 'BlockLander',
+  description: 'A commemorative NFT for Ethereum block proposers',
 }
 
 import { Client } from './client'

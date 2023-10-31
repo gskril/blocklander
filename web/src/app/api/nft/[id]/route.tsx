@@ -33,7 +33,7 @@ export async function GET(
   const baseUrl = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000'
 
   const metadata: ResponseType = {
-    name: `BlockLander #${id}`,
+    name: `BlockLander for Validator ${id}`,
     image: `${baseUrl}/api/nft/${id}/image`,
     description: 'A commemorative NFT for Ethereum block proposers',
     background_color: '000000',
