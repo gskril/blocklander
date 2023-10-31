@@ -1,11 +1,9 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig } from 'wagmi'
-import { goerli, mainnet } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 
-const devChains = process.env.NEXT_PUBLIC_TESTNETS === 'true' ? [goerli] : []
-
-export const chains = [mainnet, ...devChains]
+export const chains = [sepolia]
 
 export const { publicClient, webSocketPublicClient } = configureChains(chains, [
   publicProvider(),

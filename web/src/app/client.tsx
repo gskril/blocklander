@@ -4,11 +4,14 @@ import { Button, Spinner } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   Address,
+  sepolia,
   useAccount,
   useContractWrite,
   useDisconnect,
+  useNetwork,
   usePrepareContractWrite,
   useSignMessage,
+  useSwitchNetwork,
   useWaitForTransaction,
 } from 'wagmi'
 import { useFetch } from 'usehooks-ts'
@@ -18,8 +21,10 @@ import { Signature } from '@/lib/utils'
 import { SubTitle, Title } from '@/components/atoms'
 
 export function Client() {
+  const { chain } = useNetwork()
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
+  const { switchNetwork } = useSwitchNetwork()
   const { openConnectModal } = useConnectModal()
 
   const signature = useSignMessage({
@@ -33,7 +38,7 @@ export function Client() {
 
   const apiResponse = useFetch<{
     address: Address
-    validatorIndex: number,
+    validatorIndex: number
     signature: Signature | null
   }>(
     readyForApiCall
@@ -82,6 +87,18 @@ export function Client() {
                 return (
                   <Button onClick={() => openConnectModal?.()}>
                     Connect Wallet
+                  </Button>
+                )
+              }
+
+              // If the user is on the wrong network
+              if (chain?.unsupported) {
+                return (
+                  <Button
+                    colorStyle="redPrimary"
+                    onClick={() => switchNetwork?.(sepolia.id)}
+                  >
+                    Wrong Network
                   </Button>
                 )
               }
