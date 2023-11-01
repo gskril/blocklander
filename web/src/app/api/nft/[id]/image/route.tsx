@@ -48,7 +48,7 @@ export async function GET(
   try {
     const ownerOfToken = await baseClient.readContract({
       ...contract,
-      functionName: 'ownerOf',
+      functionName: 'minterOf',
       args: [BigInt(id)],
     })
 
