@@ -16,7 +16,7 @@ import {
 import { base } from 'wagmi/chains'
 import { useFetch } from 'usehooks-ts'
 
-import { contract } from '@/lib/contractABI'
+import { contract } from '@/lib/contract'
 import { Signature } from '@/lib/utils'
 import { SubTitle, Title } from '@/components/atoms'
 
@@ -70,15 +70,16 @@ export function Client() {
     <div>
       <main className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 lg:gap-10 xl:gap-14">
         <div className="max-w-2xl">
-          <img src="/nft.png" className="w-full" alt="" />
+          <img
+            src="/nft.png"
+            alt="NFT Preview"
+            className="w-full drop-shadow-lg transition-transform sm:hover:scale-[1.025] sm:hover:rotate-1 duration-200"
+          />
         </div>
 
         <div className="flex flex-col gap-4">
           <Title>Commemorative NFT for Block Proposers</Title>
-          <SubTitle>
-            If you’ve ever proposed a block on the Ethereum consensus layer,
-            mint the NFT.
-          </SubTitle>
+          <SubTitle>Mint from your validator's withdrawal account</SubTitle>
 
           <div className="flex gap-3 w-min items-center">
             {(() => {

@@ -2,6 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 
 import './globals.css'
 import { ClientProviders } from '@/lib/providers'
+import { FooterLink } from '@/components/FooterLink'
 
 export default function RootLayout({
   children,
@@ -10,13 +11,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className="flex flex-col justify-center items-center p-6 min-h-screen w-full lg:max-w-6xl my-0 mx-auto"
-        style={{
-          minHeight: '100svh', // safe view height, tailwind doesn't support it
-        }}
-      >
-        <ClientProviders>{children}</ClientProviders>
+      <body>
+        <ClientProviders>
+          <div
+            className="flex flex-col items-center p-4 sm:px-6 w-full lg:max-w-6xl mx-auto"
+            style={{
+              minHeight: '100svh', // safe view height, tailwind doesn't support it
+            }}
+          >
+            <div />
+
+            <div className="flex flex-grow items-center">{children}</div>
+
+            <footer>
+              <span className="text-[#9b9ba6]">
+                by{' '}
+                <FooterLink href="https://warpcast.com/greg">Greg</FooterLink>{' '}
+                and{' '}
+                <FooterLink href="https://warpcast.com/brenner">
+                  Brenner
+                </FooterLink>
+              </span>
+            </footer>
+          </div>
+        </ClientProviders>
       </body>
     </html>
   )

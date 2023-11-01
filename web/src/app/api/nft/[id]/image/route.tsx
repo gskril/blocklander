@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-import { contract } from '@/lib/contractABI'
+import { contract } from '@/lib/contract'
 import { ExecutionResponse, fetchBeaconChainData } from '@/lib/utils'
 import { createPublicClient, http } from 'viem'
 import { base, mainnet } from 'viem/chains'

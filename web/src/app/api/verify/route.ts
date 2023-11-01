@@ -9,8 +9,7 @@ import {
   fetchBeaconChainData,
 } from '@/lib/utils'
 import { Address } from 'viem'
-
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+import { contract } from '@/lib/contract'
 
 const addressZ = z.string().regex(/^0x[a-fA-F0-9]{40}$/)
 
@@ -20,10 +19,6 @@ const schema = z.object({
 })
 
 export async function GET(request: NextRequest) {
-  if (!CONTRACT_ADDRESS) {
-    throw new Error('Missing contract address')
-  }
-
   const params = parseSearchParams(request.nextUrl.searchParams)
   const safeParse = schema.safeParse(params)
 
@@ -55,7 +50,7 @@ export async function GET(request: NextRequest) {
         address,
         beaconData.validatorIndex,
         projectSlug,
-        CONTRACT_ADDRESS,
+        contract.address,
         network
       )
     } catch (err) {
