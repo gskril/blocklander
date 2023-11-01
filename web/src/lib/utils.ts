@@ -1,6 +1,6 @@
-import { base } from 'viem/chains'
-import { ethers, Wallet } from 'ethers'
+import { Wallet, ethers } from 'ethers'
 import { Address } from 'viem'
+import { base } from 'viem/chains'
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
 const BEACONCHAIN_API_KEY = process.env.BEACONCHAIN_API_KEY || ''

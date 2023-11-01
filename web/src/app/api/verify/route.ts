@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server'
-import z from 'zod'
-import { recoverAddress } from 'ethers/lib/utils'
 import { hashMessage } from '@ethersproject/hash'
+import { recoverAddress } from 'ethers/lib/utils'
+import { NextRequest, NextResponse } from 'next/server'
+import { Address } from 'viem'
+import z from 'zod'
+
+import { contract } from '@/lib/contract'
 import {
-  parseSearchParams,
-  generateMintingSignature,
   Signature,
   fetchBeaconChainData,
+  generateMintingSignature,
+  parseSearchParams,
 } from '@/lib/utils'
-import { Address } from 'viem'
-import { contract } from '@/lib/contract'
 
 const addressZ = z.string().regex(/^0x[a-fA-F0-9]{40}$/)
 

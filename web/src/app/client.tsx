@@ -2,6 +2,7 @@
 
 import { Button, Spinner } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useFetch } from 'usehooks-ts'
 import {
   Address,
   useAccount,
@@ -14,11 +15,10 @@ import {
   useWaitForTransaction,
 } from 'wagmi'
 import { base } from 'wagmi/chains'
-import { useFetch } from 'usehooks-ts'
 
+import { SubTitle, Title } from '@/components/atoms'
 import { contract } from '@/lib/contract'
 import { Signature } from '@/lib/utils'
-import { SubTitle, Title } from '@/components/atoms'
 
 export function Client() {
   const { chain } = useNetwork()
@@ -68,12 +68,12 @@ export function Client() {
 
   return (
     <div>
-      <main className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 lg:gap-10 xl:gap-14">
+      <main className="grid grid-cols-1 items-center gap-6 lg:grid-cols-2 lg:gap-10 xl:gap-14">
         <div className="max-w-2xl">
           <img
             src="/nft.png"
             alt="NFT Preview"
-            className="w-full drop-shadow-lg transition-transform sm:hover:scale-[1.025] sm:hover:rotate-1 duration-200"
+            className="w-full drop-shadow-lg transition-transform duration-200 sm:hover:rotate-1 sm:hover:scale-[1.025]"
           />
         </div>
 
@@ -81,7 +81,7 @@ export function Client() {
           <Title>Commemorative NFT for Block Proposers</Title>
           <SubTitle>Mint from your validator's withdrawal account</SubTitle>
 
-          <div className="flex gap-3 w-min items-center">
+          <div className="flex w-min items-center gap-3">
             {(() => {
               // If the user hasn't connected, show the connect button
               if (!address) {

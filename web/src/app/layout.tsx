@@ -1,8 +1,9 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
-import './globals.css'
-import { ClientProviders } from '@/lib/providers'
 import { FooterLink } from '@/components/FooterLink'
+import { ClientProviders } from '@/lib/providers'
+
+import './globals.css'
 
 export default function RootLayout({
   children,
