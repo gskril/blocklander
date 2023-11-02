@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   let signature: Signature | null = null
 
-  if (beaconData) {
+  if (beaconData && beaconData.executionData.data.length > 0) {
     try {
       signature = await generateMintingSignature(
         address,
