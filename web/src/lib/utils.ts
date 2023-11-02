@@ -5,7 +5,7 @@ import { base } from 'viem/chains'
 
 import { contract } from '@/lib/contract'
 
-const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
+const VERIFIER_PRIVATE_KEY = process.env.VERIFIER_PRIVATE_KEY || ''
 const BEACONCHAIN_API_KEY = process.env.BEACONCHAIN_API_KEY || ''
 
 export function parseSearchParams(
@@ -62,7 +62,7 @@ export const generateSignature = async (
   validatorIndex: number,
   domainSeparator: string
 ) => {
-  const signer = new Wallet(VALIDATOR_PRIVATE_KEY)
+  const signer = new Wallet(VERIFIER_PRIVATE_KEY)
 
   const payloadHash = ethers.utils.defaultAbiCoder.encode(
     ['bytes32', 'address', 'uint256'],
