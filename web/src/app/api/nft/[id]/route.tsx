@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 
+import { fetchBeaconChainDataFromTokenId } from '@/lib/utils'
+
 type ResponseType = {
   name: string
   image: string
@@ -29,11 +31,20 @@ export async function GET(
 
   const { id } = safeParse.data
 
+  let validatorIndex: number | undefined
+
+  try {
+    const beaconChainData = await fetchBeaconChainDataFromTokenId(BigInt(id))
+    validatorIndex = beaconChainData.validatorIndex
+  } catch {}
+
   const VERCEL_URL = process.env.VERCEL_URL
   const baseUrl = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000'
 
   const metadata: ResponseType = {
-    name: `BlockLander for Validator ${id}`,
+    name: validatorIndex
+      ? `BlockLander for Validator ${validatorIndex}`
+      : `BlockLander`,
     image: `${baseUrl}/api/nft/${id}/image`,
     description: 'A commemorative NFT for Ethereum block proposers',
     background_color: '000000',

@@ -1,6 +1,9 @@
 import { Wallet, ethers } from 'ethers'
 import { Address } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { base } from 'viem/chains'
+
+import { contract } from '@/lib/contract'
 
 const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY || ''
 const BEACONCHAIN_API_KEY = process.env.BEACONCHAIN_API_KEY || ''
@@ -13,6 +16,10 @@ export function parseSearchParams(
     query[key] = value
   }
   return query
+}
+
+export function truncateAddress(address: Address) {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
 export type Signature = {
@@ -159,4 +166,20 @@ export async function fetchBeaconChainData(
   } catch (error) {
     console.error('Error fetching data:', error)
   }
+}
+
+export async function fetchBeaconChainDataFromTokenId(tokenId: bigint) {
+  const baseClient = createPublicClient({
+    chain: base,
+    transport: http(),
+  })
+
+  const minterOfToken = await baseClient.readContract({
+    ...contract,
+    functionName: 'minterOf',
+    args: [tokenId],
+  })
+
+  const beaconChainData = await fetchBeaconChainData(minterOfToken)
+  return { minterOfToken, ...beaconChainData }
 }

@@ -1,11 +1,14 @@
 import { ImageResponse } from 'next/og'
 import { NextRequest, NextResponse } from 'next/server'
 import { createPublicClient, http } from 'viem'
-import { base, mainnet } from 'viem/chains'
+import { mainnet } from 'viem/chains'
 import z from 'zod'
 
-import { contract } from '@/lib/contract'
-import { ExecutionResponse, fetchBeaconChainData } from '@/lib/utils'
+import {
+  ExecutionResponse,
+  fetchBeaconChainDataFromTokenId,
+  truncateAddress,
+} from '@/lib/utils'
 
 export const runtime = 'edge'
 
@@ -35,45 +38,32 @@ export async function GET(
 
   const { id } = safeParse.data
 
-  const baseClient = createPublicClient({
-    chain: base,
-    transport: http(),
-  })
-
   const mainnetClient = createPublicClient({
     chain: mainnet,
     transport: http(),
   })
 
   try {
-    const ownerOfToken = await baseClient.readContract({
-      ...contract,
-      functionName: 'minterOf',
-      args: [BigInt(id)],
-    })
+    const { minterOfToken, executionData, validatorIndex } =
+      await fetchBeaconChainDataFromTokenId(BigInt(id))
 
-    const name = await mainnetClient.getEnsName({ address: ownerOfToken })
-    const beaconChainData = await fetchBeaconChainData(ownerOfToken)
+    const name = await mainnetClient.getEnsName({ address: minterOfToken })
 
-    if (!beaconChainData?.executionData) {
+    if (!executionData) {
       return NextResponse.json(
         { error: 'No data found for this address' },
         { status: 400 }
       )
     }
 
-    const rewards = beaconChainData.executionData.data.map(
-      (data) => data.blockReward
-    )
+    const rewards = executionData.data.map((data) => data.blockReward)
     const rewardsSum = rewards.reduce((acc, curr) => acc + curr, 0)
 
     const image = await generateImage({
-      name:
-        name?.toUpperCase() ||
-        ownerOfToken.slice(0, 6) + '...' + ownerOfToken.slice(-4),
-      validatorIndex: beaconChainData.validatorIndex,
-      latestBlock: beaconChainData.executionData.data[0],
-      blocksLanded: beaconChainData.executionData.data.length,
+      name: name?.toUpperCase() || truncateAddress(minterOfToken),
+      validatorIndex: validatorIndex,
+      latestBlock: executionData.data[0],
+      blocksLanded: executionData.data.length,
       ethEarned: rewardsSum,
     })
 
@@ -88,7 +78,7 @@ export async function GET(
 
 type ImageProps = {
   name: string
-  validatorIndex: number
+  validatorIndex: number | undefined
   latestBlock: ExecutionResponse['data'][0]
   blocksLanded: number
   ethEarned: number
@@ -164,7 +154,7 @@ async function generateImage({
             {name}
           </span>
 
-          {name.length <= 14 && (
+          {name.length <= 14 && !!validatorIndex && (
             <span
               style={{
                 fontSize: '4rem',
