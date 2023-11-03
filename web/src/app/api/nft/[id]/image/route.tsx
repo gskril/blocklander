@@ -40,14 +40,16 @@ export async function GET(
 
   const mainnetClient = createPublicClient({
     chain: mainnet,
-    transport: http(),
+    transport: http('https://rpc.ankr.com/eth'),
   })
 
   try {
     const { minterOfToken, executionData, validatorIndex } =
       await fetchBeaconChainDataFromTokenId(BigInt(id))
 
-    const name = await mainnetClient.getEnsName({ address: minterOfToken })
+    const name = await mainnetClient
+      .getEnsName({ address: minterOfToken })
+      .catch(() => undefined)
 
     if (!executionData) {
       return NextResponse.json(
