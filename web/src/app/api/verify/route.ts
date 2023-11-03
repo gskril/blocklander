@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const { address, userSignature } = safeParse.data
 
   const projectSlug = 'blockLander'
-  const network: string = 'base'
+  const network: string = 'mainnet'
   const message = JSON.stringify({ network, projectSlug })
   const signerAddress = addressZ.parse(
     recoverAddress(hashMessage(message), userSignature)

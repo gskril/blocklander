@@ -6,6 +6,7 @@ import z from 'zod'
 
 import {
   ExecutionResponse,
+  client,
   fetchBeaconChainDataFromTokenId,
   truncateAddress,
 } from '@/lib/utils'
@@ -38,16 +39,11 @@ export async function GET(
 
   const { id } = safeParse.data
 
-  const mainnetClient = createPublicClient({
-    chain: mainnet,
-    transport: http('https://rpc.ankr.com/eth'),
-  })
-
   try {
     const { minterOfToken, executionData, validatorIndex } =
       await fetchBeaconChainDataFromTokenId(BigInt(id))
 
-    const name = await mainnetClient
+    const name = await client
       .getEnsName({ address: minterOfToken })
       .catch(() => undefined)
 

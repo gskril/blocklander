@@ -14,7 +14,7 @@ import {
   useSwitchNetwork,
   useWaitForTransaction,
 } from 'wagmi'
-import { base } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 import { SubTitle, Title } from '@/components/atoms'
 import { contract } from '@/lib/contract'
@@ -29,7 +29,7 @@ export function Client() {
 
   const signature = useSignMessage({
     message: JSON.stringify({
-      network: 'base',
+      network: 'mainnet',
       projectSlug: 'blockLander',
     }),
   })
@@ -97,7 +97,7 @@ export function Client() {
                 return (
                   <Button
                     colorStyle="redPrimary"
-                    onClick={() => switchNetwork?.(base.id)}
+                    onClick={() => switchNetwork?.(mainnet.id)}
                   >
                     Wrong Network
                   </Button>
@@ -109,10 +109,10 @@ export function Client() {
                   <Button
                     as="a"
                     target="_blank"
-                    href={`https://basescan.org/tx/${receipt.data?.transactionHash}`}
+                    href={`https://etherscan.io/tx/${receipt.data?.transactionHash}`}
                     colorStyle="greenPrimary"
                   >
-                    Success! View on BaseScan
+                    Success! View on Etherscan
                   </Button>
                 )
               }
