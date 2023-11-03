@@ -1,7 +1,7 @@
 import { Wallet, ethers } from 'ethers'
 import { Address } from 'viem'
 import { createPublicClient, http } from 'viem'
-import { base } from 'viem/chains'
+import { mainnet } from 'viem/chains'
 
 import { contract } from '@/lib/contract'
 
@@ -40,7 +40,7 @@ export const createDomainSeparator = (
 ): string => {
   // tokenId is use for 1155s, where each tokenId has different mint requirements.
   // for 712s, tokenId is always 1.
-  const networkId = base.id
+  const networkId = mainnet.id
 
   const DOMAIN_SEPARATOR = ethers.utils.keccak256(
     ethers.utils.defaultAbiCoder.encode(
@@ -168,13 +168,13 @@ export async function fetchBeaconChainData(
   }
 }
 
-export async function fetchBeaconChainDataFromTokenId(tokenId: bigint) {
-  const baseClient = createPublicClient({
-    chain: base,
-    transport: http('https://rpc.ankr.com/base'),
-  })
+export const client = createPublicClient({
+  chain: mainnet,
+  transport: http('https://rpc.ankr.com/eth'),
+})
 
-  const minterOfToken = await baseClient.readContract({
+export async function fetchBeaconChainDataFromTokenId(tokenId: bigint) {
+  const minterOfToken = await client.readContract({
     ...contract,
     functionName: 'minterOf',
     args: [tokenId],
