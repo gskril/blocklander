@@ -171,7 +171,7 @@ export async function fetchBeaconChainData(
 export async function fetchBeaconChainDataFromTokenId(tokenId: bigint) {
   const baseClient = createPublicClient({
     chain: base,
-    transport: http(),
+    transport: http('https://rpc.ankr.com/base'),
   })
 
   const minterOfToken = await baseClient.readContract({
