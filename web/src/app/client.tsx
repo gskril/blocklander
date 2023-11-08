@@ -3,9 +3,11 @@
 import { Button, Spinner } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useFetch } from 'usehooks-ts'
+import { parseEther } from 'viem/utils'
 import {
   Address,
   useAccount,
+  useBalance,
   useContractWrite,
   useDisconnect,
   useNetwork,
@@ -48,11 +50,16 @@ export function Client() {
 
   const apiResponseIsLoading = !apiResponse.data && !apiResponse.error
 
+  const mintPrice = 0.000777
+  const balance = useBalance({ address })
+  const hasSufficientBalance = Number(balance.data?.formatted) > mintPrice
+
   const prepare = usePrepareContractWrite({
     ...contract,
     functionName: 'mintWithSignature',
+    value: parseEther(mintPrice.toString()),
     args:
-      address && apiResponse.data?.signature
+      address && apiResponse.data?.signature && hasSufficientBalance
         ? [
             address, // minter
             BigInt(apiResponse.data?.validatorIndex), // validatorIndex
@@ -81,7 +88,7 @@ export function Client() {
           <Title>Commemorative NFT for Block Proposers</Title>
           <SubTitle>Mint from your validator's withdrawal account</SubTitle>
 
-          <div className="flex w-min items-center gap-3">
+          <div className="flex flex-col xs:flex-row w-min items-center gap-3">
             {(() => {
               // If the user hasn't connected, show the connect button
               if (!address) {
@@ -128,6 +135,14 @@ export function Client() {
                 return (
                   <Button disabled loading>
                     Transaction Processing
+                  </Button>
+                )
+              }
+
+              if (!hasSufficientBalance) {
+                return (
+                  <Button colorStyle="redPrimary">
+                    Insufficient Balance ({mintPrice} ETH)
                   </Button>
                 )
               }

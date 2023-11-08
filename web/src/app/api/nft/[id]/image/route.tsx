@@ -1,7 +1,5 @@
 import { ImageResponse } from 'next/og'
 import { NextRequest, NextResponse } from 'next/server'
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
 import z from 'zod'
 
 import {
