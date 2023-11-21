@@ -268,6 +268,9 @@ async function generateImage({
           style: 'normal',
         },
       ],
+      headers: {
+        'Cache-Control': 's-maxage=60, stale-while-revalidate=3600',
+      },
     }
   )
 }
